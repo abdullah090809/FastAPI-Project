@@ -25,7 +25,7 @@ def get_posts(db: Session = Depends(get_db),current_user: User= Depends(Get_Curr
         post.votes = vote_count
         posts.append(post)
     return posts
-@router.post("/", response_model=PostResponse)
+@router.post("/", response_model=PostResponse,status_code=status.HTTP_201_CREATED)
 def create_post(post: PostCreate, db: Session = Depends(get_db), current_user: User= Depends(Get_Current_User)):
     new_post = Post(owner_id=current_user.id,**post.model_dump())
     db.add(new_post)
