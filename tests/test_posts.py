@@ -44,5 +44,68 @@ def test_create_post(authorize_client,title,content,published,create_test_user):
     assert created_post.owner_id == create_test_user['id']
     
 def test_unauthorized_user_create_post(client,test_posts):
-    response =client.post("/posts/",json={"title": "Anime", "content": "Worth Watching", "published": True})
+    response = client.post("/posts/",json={"title": "Anime", "content": "Worth Watching", "published": True})
     assert response.status_code == 401
+
+def test_unauthorized_delete_post(client,test_posts):
+    response = client.delete(f"/posts/{test_posts[0].id}")
+    assert response.status_code == 401
+
+def test_delete_post(authorize_client,test_posts):
+    response = authorize_client.delete(f"/posts/{test_posts[0].id}")
+    assert response.status_code == 204
+
+def test_delete_post_non_exit(authorize_client,test_posts):
+    response = authorize_client.delete("/posts/-9999")
+    assert response.status_code == 404
+
+def test_delete_other_user_post(authorize_client,test_posts):
+    response = authorize_client.delete(f"/posts/{test_posts[3].id}")
+    assert response.status_code == 403
+
+def test_update_post(authorize_client,test_posts):
+    data = {
+        "title": "MHA",
+        "content": "Anime of the Year",
+        "id": test_posts[0].id
+        }
+    response = authorize_client.put(f"/posts/{test_posts[0].id}", json=data)
+    updated_post = PostResponse(**response.json())
+    assert response.status_code == 200
+    assert updated_post.title == data["title"]
+
+def test_other_user_post(authorize_client,test_posts):
+    data = {
+        "title": "MHA",
+        "content": "Anime of the Year",
+        "id": test_posts[3].id
+    }
+    response = authorize_client.put(f"/posts/{test_posts[3].id}", json=data)
+    assert response.status_code == 403
+
+def test_patch_post(authorize_client,test_posts):
+    data = {
+        "title": "MHA",
+    }
+    response = authorize_client.patch(f"/posts/{test_posts[0].id}", json=data)
+    updated_post = PostResponse(**response.json())
+    assert response.status_code == 200
+    assert updated_post.title == data["title"]
+
+def test_unauthorized_update_post(client,test_posts):
+    response = client.put(f"/posts/{test_posts[0].id}")
+    assert response.status_code == 401
+
+def test_unauthorized_patch_update_post(client,test_posts):
+    response = client.patch(f"/posts/{test_posts[0].id}")
+    assert response.status_code == 401
+
+def test_update_post_non_exit(authorize_client,test_posts):
+    data = {"title": "MHA", "content": "Anime of the Year"}
+    response = authorize_client.put("/posts/-9999", json=data)
+    assert response.status_code == 404
+
+def test_patch_update_post_non_exit(authorize_client,test_posts):
+    data = {"title": "MHA"}
+    response = authorize_client.patch("/posts/-9999", json=data)
+    assert response.status_code == 404
