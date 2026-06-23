@@ -7,8 +7,8 @@ jobs:
     environment:
       name: testing
     env:
-      DATABASE_HOSTNAME: ${{ secrets.DATABASE_HOSTNAME }}
-      DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
+      DATABASE_HOSTNAME: localhost
+      DATABASE_PORT: 5432
       DATABASE_NAME: ${{ secrets.DATABASE_NAME }}_test
       DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
       DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
@@ -46,6 +46,15 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
+
+      - name: Wait for PostgreSQL
+        run: |
+          until pg_isready -h localhost -p 5432; do
+            echo 'waiting for postgres...'
+            sleep 1
+          done
+        env:
+          PGPASSWORD: ${{ secrets.DATABASE_PASSWORD }}
 
       - name: Run tests
         run: pytest
