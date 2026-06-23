@@ -56,5 +56,11 @@ jobs:
         env:
           PGPASSWORD: ${{ secrets.DATABASE_PASSWORD }}
 
+      - name: Create test database
+        run: |
+          psql -h localhost -U ${{ secrets.DATABASE_USERNAME }} -d postgres -c "CREATE DATABASE ${{ secrets.DATABASE_NAME }}_test;"
+        env:
+          PGPASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+
       - name: Run tests
         run: pytest
