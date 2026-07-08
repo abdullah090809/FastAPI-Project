@@ -9,7 +9,7 @@ from app.oauth2 import Create_Access_Token
 from app.models import Post
 
 
-SQLALCHEMY_DATABASE_URL = f"postgresql://{setting.database_username}:{setting.database_password}@{setting.database_hostname}:{setting.database_port}/{setting.database_name}_test"
+SQLALCHEMY_DATABASE_URL = f"postgresql://{setting.database_username}:{setting.database_password}@{setting.database_hostname}:{setting.database_port}/{setting.test_database_name}"
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 TestingSessionMaker = sessionmaker(autoflush=False, autocommit=False, bind=engine)
 
