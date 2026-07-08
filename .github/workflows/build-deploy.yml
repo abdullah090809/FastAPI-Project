@@ -16,6 +16,7 @@ jobs:
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
       ALGORITHM: ${{ secrets.ALGORITHM }}
       ACCESS_TOKEN_EXPIRE_MINUTES: ${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}
+      TEST_DATABASE_NAME: ${{ secrets.TEST_DATABASE_NAME }}
 
     services:
       postgres:
